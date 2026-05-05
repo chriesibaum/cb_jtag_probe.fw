@@ -439,7 +439,7 @@ USBD_DEVICE_DEFINE(jtag_usbd,
 		   0x0001);
 USBD_DESC_LANG_DEFINE(jtag_lang);
 USBD_DESC_MANUFACTURER_DEFINE(jtag_mfr, "Chriesibaum GmbH");
-USBD_DESC_PRODUCT_DEFINE(jtag_product, "CB-7777 JTAG Probe");
+USBD_DESC_PRODUCT_DEFINE(jtag_product, "Chriesibaum's JTAG Probe");
 USBD_DESC_CONFIG_DEFINE(jtag_fs_cfg_desc, "JTAG FS");
 USBD_DESC_CONFIG_DEFINE(jtag_hs_cfg_desc, "JTAG HS");
 USBD_CONFIGURATION_DEFINE(jtag_fs_config, 0, 50, &jtag_fs_cfg_desc);
