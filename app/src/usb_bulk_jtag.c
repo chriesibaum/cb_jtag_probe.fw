@@ -49,6 +49,7 @@ static uint8_t tx_buf[JTAG_BULK_MAX_RESP_BYTES];
 
 static int jtag_bulk_expected_req_len(const uint8_t *buf, size_t len, size_t *expected)
 {
+	uint8_t cmd;
 	uint32_t n_bits;
 	size_t n_bytes;
 
@@ -58,6 +59,16 @@ static int jtag_bulk_expected_req_len(const uint8_t *buf, size_t len, size_t *ex
 
 	if (len < JTAG_PROTO_HEADER_SIZE) {
 		return -EAGAIN;
+	}
+
+	cmd = buf[0];
+	if ((cmd == JTAG_CMD_NSRST_HIGH) || (cmd == JTAG_CMD_NSRST_LOW)) {
+		*expected = JTAG_PROTO_HEADER_SIZE;
+		return 0;
+	}
+
+	if (cmd != JTAG_CMD_SCAN) {
+		return -EINVAL;
 	}
 
 	/* Header layout: cmd(1), flags(1), reserved(2), n_bits(4 LE). */

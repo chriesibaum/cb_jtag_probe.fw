@@ -19,6 +19,9 @@ int jtag_engine_shift_loopback(const uint8_t *tdi,
 				      uint8_t *tdo,
 				      uint32_t n_bits);
 
+int jtag_engine_set_nsrst_high(void);
+int jtag_engine_set_nsrst_low(void);
+
 #ifdef __cplusplus
 }
 #endif

@@ -4,6 +4,8 @@
 		jtag-tms = &jtag_tms;
 		jtag-tdi = &jtag_tdi;
 		jtag-tdo = &jtag_tdo;
+		jtag-ntrst = &jtag_ntrst;
+		jtag-nsrst = &jtag_nsrst;
 	};
 
 	jtag_pins: jtag_pins {
@@ -28,5 +30,16 @@
 			gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
 			label = "JTAG TDO";
 		};
+
+		jtag_ntrst: jtag_ntrst {
+			gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
+			label = "JTAG nTRST";
+		};
+
+		jtag_nsrst: jtag_nsrst {
+			gpios = <&gpio0 15 GPIO_ACTIVE_HIGH>;
+			label = "JTAG nSRST";
+		};
+
 	};
 };

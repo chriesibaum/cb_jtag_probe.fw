@@ -1,5 +1,6 @@
 #include <zephyr/devicetree.h>
 #include <zephyr/drivers/gpio.h>
+#include <errno.h>
 #include <string.h>
 
 #include "jtag_engine.h"
@@ -8,12 +9,14 @@
 
 // ---- logging includes/defines ----------------------------------------------
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(JTAG_ENGINE, CONFIG_LOG_DEFAULT_LEVEL);
+// LOG_MODULE_REGISTER(JTAG_ENGINE, CONFIG_LOG_DEFAULT_LEVEL);
+LOG_MODULE_REGISTER(JTAG_ENGINE, LOG_LEVEL_DBG);
 
 #define JTAG_TCK_NODE DT_ALIAS(jtag_tck)
 #define JTAG_TMS_NODE DT_ALIAS(jtag_tms)
 #define JTAG_TDI_NODE DT_ALIAS(jtag_tdi)
 #define JTAG_TDO_NODE DT_ALIAS(jtag_tdo)
+#define JTAG_NSRST_NODE DT_NODELABEL(jtag_nsrst)
 
 #if DT_HAS_ALIAS(jtag_tck) && DT_HAS_ALIAS(jtag_tms) && \
 	DT_HAS_ALIAS(jtag_tdi) && DT_HAS_ALIAS(jtag_tdo)
@@ -27,7 +30,12 @@ LOG_MODULE_REGISTER(JTAG_ENGINE, CONFIG_LOG_DEFAULT_LEVEL);
 #endif
 
 static bool jtag_ready;
+static bool nsrst_ready;
 static const size_t jtag_log_hexdump_max_bytes = 64u;
+
+#if DT_NODE_EXISTS(JTAG_NSRST_NODE)
+static const struct gpio_dt_spec jtag_nsrst = GPIO_DT_SPEC_GET(JTAG_NSRST_NODE, gpios);
+#endif
 
 static inline uint8_t get_bit(const uint8_t *buf, uint32_t bit_index)
 {
@@ -78,6 +86,23 @@ int jtag_engine_init(void)
 		LOG_ERR("Failed to configure TDO rc=%d", rc);
 		return rc;
 	}
+
+#if DT_NODE_EXISTS(JTAG_NSRST_NODE)
+	if (!device_is_ready(jtag_nsrst.port)) {
+		LOG_WRN("nSRST GPIO port not ready, reset control disabled");
+		nsrst_ready = false;
+	} else {
+		rc = gpio_pin_configure_dt(&jtag_nsrst, GPIO_OUTPUT_ACTIVE);
+		if (rc != 0) {
+			LOG_WRN("Failed to configure nSRST rc=%d, reset control disabled", rc);
+			nsrst_ready = false;
+		} else {
+			nsrst_ready = true;
+		}
+	}
+#else
+	nsrst_ready = false;
+#endif
 
 	jtag_ready = true;
 	return 0;
@@ -167,6 +192,42 @@ int jtag_engine_shift_loopback(const uint8_t *tdi,
     LOG_HEXDUMP_DBG(tdo, n_bytes, "TDO");
 
 	return 0;
+}
+
+int jtag_engine_set_nsrst_high(void)
+{
+#if DT_NODE_EXISTS(JTAG_NSRST_NODE)
+	if (!jtag_ready) {
+		return -EIO;
+	}
+
+	if (!nsrst_ready) {
+		return -ENOTSUP;
+	}
+
+	LOG_DBG("set nSRST high");
+	return gpio_pin_set_dt(&jtag_nsrst, 1);
+#else
+	return -ENOTSUP;
+#endif
+}
+
+int jtag_engine_set_nsrst_low(void)
+{
+#if DT_NODE_EXISTS(JTAG_NSRST_NODE)
+	if (!jtag_ready) {
+		return -EIO;
+	}
+
+	if (!nsrst_ready) {
+		return -ENOTSUP;
+	}
+
+	LOG_DBG("set nSRST low");
+	return gpio_pin_set_dt(&jtag_nsrst, 0);
+#else
+	return -ENOTSUP;
+#endif
 }
 
 
