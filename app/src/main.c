@@ -3,6 +3,7 @@
 #include <zephyr/kernel.h>
 
 #include "error.h"
+#include "sys.h"
 #include "info.h"
 #include "jtag_engine.h"
 #include "usb_bulk_jtag.h"
@@ -16,6 +17,9 @@ LOG_MODULE_REGISTER(main, CONFIG_LOG_DEFAULT_LEVEL);
 int32_t main(void)
 {
     int ret;
+
+    ret = sys_init();
+    ERR_CHECK(ret < 0, ret, "System init failed (err %d)", ret);
 
     ret = jtag_engine_init();
     ERR_CHECK(ret < 0, ret, "JTAG engine init failed (err %d)", ret);
