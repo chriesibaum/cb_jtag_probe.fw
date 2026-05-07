@@ -1,14 +1,17 @@
-# work packages:
-
-- change logging from USB to UART
+# open work packages:
 
 - add reset signals
     - TRST
-    - SRST
 
 - add VREF signal
 
+
+
+
+## done
+- change logging from USB to UART
+
+- add reset signals
+    - SRST
+
 - add a status LED
-
-
-
