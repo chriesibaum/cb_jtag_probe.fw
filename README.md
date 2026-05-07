@@ -23,6 +23,7 @@ Is your board missing? - Just contact me and we can provide a port for you.
 - Flash the uf2 binnary image to the Raspberry Pi Pico
 - Install the udev rule to be able to connect to the Chriesibaum JTAG Probe
 - Connect the JTAG signals to your target
+- Run the examples ```cb_jtag_probe_example.py``` or ```cb_jtag_probe_read_idcodes.py```
 - Adjust the example script from [cb_jtag](https://github.com/chriesibaum/cb_jtag) to your target and run it.
 
 This is running perfectly on Ubuntu 24.04 and should work out of the box on other Linux systems.
