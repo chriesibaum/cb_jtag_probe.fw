@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # SPDX-FileCopyrightText: 2025 Thomas@chriesibaum.dev
 
-VENV_DIR="/tmp/cb_7777/.venv"
+VENV_DIR="/tmp/cb_jtag_probe_testing/.venv"
 
 if ! command -v uv >/dev/null 2>&1; then
     echo "uv is required but not installed. Install it from https://docs.astral.sh/uv/ and re-run this script."
