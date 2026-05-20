@@ -56,6 +56,12 @@ class TestProbeInterface:
             f"Probe version mismatch. Expected '{self.expected_fw_version}', got '{probe_version}'"
         )
 
+    def test_get_probe_id_str(self):
+        probe_id = self.jtag.get_probe_id_str()
+        assert probe_id, "Probe ID must not be empty"
+        assert isinstance(probe_id, str), f"Probe ID should be a string, got {type(probe_id)}"
+        assert len(probe_id) > 0, "Probe ID string should not be empty"
+
     def test_read_idcodes(self):
         self.jtag.set_sys_reset_pin_low()
         self.jtag.tap_reset()

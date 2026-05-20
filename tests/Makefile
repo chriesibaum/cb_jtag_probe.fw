@@ -7,7 +7,7 @@ TWISTER_OUT_APP_BUILD=./twister-out__app_build
 TWISTER_OUT_TEST_PROBE=./twister-out__test_probe
 
 
-.PHONY: list-tests twister_app_build twister_read_idcodes clean mr-proper
+.PHONY: list-tests twister_app_build twister_probe clean mr-proper
 
 
 

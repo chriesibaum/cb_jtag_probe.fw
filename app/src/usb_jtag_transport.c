@@ -2,6 +2,8 @@
 
 #include <string.h>
 
+#include <zephyr/drivers/hwinfo.h>
+
 #include "fw_version.h"
 #include "jtag_engine.h"
 #include "jtag_proto.h"
@@ -95,6 +97,27 @@ int usb_jtag_transport_process_frame(const uint8_t *rx_buf,
 		rsp.n_bits = JTAG_FW_VERSION_PAYLOAD_LEN * 8u;
 		rsp.n_bytes = JTAG_FW_VERSION_PAYLOAD_LEN;
 		rsp.tdo = version_payload;
+		return jtag_proto_encode_scan_response(&rsp, tx_buf, tx_buf_len, tx_len);
+	} else if (cmd == JTAG_CMD_GET_DEVICE_ID) {
+		uint8_t device_id_payload[JTAG_DEVICE_ID_PAYLOAD_MAX_LEN] = {0};
+		ssize_t device_id_len;
+
+		device_id_len = hwinfo_get_device_id(device_id_payload,
+						     sizeof(device_id_payload));
+		if (device_id_len <= 0) {
+			rsp.status = JTAG_STATUS_INTERNAL_ERR;
+			rsp.flags = 0u;
+			rsp.n_bits = 0u;
+			rsp.n_bytes = 0u;
+			rsp.tdo = NULL;
+			return jtag_proto_encode_scan_response(&rsp, tx_buf, tx_buf_len, tx_len);
+		}
+
+		rsp.status = JTAG_STATUS_OK;
+		rsp.flags = 0u;
+		rsp.n_bits = (uint32_t)device_id_len * 8u;
+		rsp.n_bytes = (size_t)device_id_len;
+		rsp.tdo = device_id_payload;
 		return jtag_proto_encode_scan_response(&rsp, tx_buf, tx_buf_len, tx_len);
 	} else {
 		rsp.status = JTAG_STATUS_BAD_CMD;

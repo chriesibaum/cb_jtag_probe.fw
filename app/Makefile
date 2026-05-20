@@ -21,7 +21,7 @@ build:
 
 
 clean:
-	rm -rf ./build/
+	rm -rf ./build*
 
 mr-proper: clean
 	rm -rf ./$(BIN_DIR)/

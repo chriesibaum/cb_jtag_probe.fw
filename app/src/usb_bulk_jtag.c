@@ -64,7 +64,8 @@ static int jtag_bulk_expected_req_len(const uint8_t *buf, size_t len, size_t *ex
 	cmd = buf[0];
 	if ((cmd == JTAG_CMD_NSRST_HIGH) ||
 	    (cmd == JTAG_CMD_NSRST_LOW) ||
-	    (cmd == JTAG_CMD_GET_FW_VERSION)) {
+	    (cmd == JTAG_CMD_GET_FW_VERSION) ||
+	    (cmd == JTAG_CMD_GET_DEVICE_ID)) {
 		*expected = JTAG_PROTO_HEADER_SIZE;
 		return 0;
 	}
